@@ -107,7 +107,7 @@ export default function JoinApplicationPage() {
                                         <div className="flex gap-2 text-sm text-gray-600 truncate max-w-[200px]">
                                             <TooltipProvider>
                                                 <Tooltip>
-                                                    <TooltipTrigger className="truncate text-left">
+                                                    <TooltipTrigger className="truncate text-left block w-full">
                                                         {app.myDream || app.interests || '-'}
                                                     </TooltipTrigger>
                                                     <TooltipContent>

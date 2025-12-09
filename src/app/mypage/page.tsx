@@ -45,6 +45,31 @@ export default function MyPage() {
         hashTags: ''
     });
 
+    // Formatters
+    const formatPhoneNumber = (value: string) => {
+        const numbers = value.replace(/[^\d]/g, '');
+        if (numbers.length <= 3) return numbers;
+        if (numbers.length <= 7) return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+        return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    };
+
+    const formatBirthDate = (value: string) => {
+        const numbers = value.replace(/[^\d]/g, '');
+        if (numbers.length <= 4) return numbers;
+        if (numbers.length <= 6) return `${numbers.slice(0, 4)}-${numbers.slice(4)}`;
+        return `${numbers.slice(0, 4)}-${numbers.slice(4, 6)}-${numbers.slice(6, 8)}`;
+    };
+
+    const formatHashTags = (value: string) => {
+        const parts = value.split(' ');
+        const formattedParts = parts.map(part => {
+            if (part === '') return '';
+            if (part.startsWith('#')) return part;
+            return '#' + part;
+        });
+        return formattedParts.join(' ');
+    };
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -268,8 +293,8 @@ export default function MyPage() {
                                 <span className="text-xs font-medium text-gray-500">기본 프로필</span>
                             </div>
 
-                            {/* Member Profile Image (MEMBER only) */}
-                            {profile.role === 'MEMBER' && (
+                            {/* Member Profile Image (MEMBER or ADMIN) */}
+                            {(profile.role === 'MEMBER' || profile.role === 'ADMIN') && (
                                 <div className="flex flex-col items-center gap-2">
                                     <div className="relative group">
                                         <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border-2 border-transparent group-hover:border-blue-200 transition-all">
@@ -339,8 +364,10 @@ export default function MyPage() {
                                     <input
                                         type="tel"
                                         value={editForm.phoneNumber}
-                                        onChange={(e) => setEditForm({ ...editForm, phoneNumber: e.target.value })}
+                                        onChange={(e) => setEditForm({ ...editForm, phoneNumber: formatPhoneNumber(e.target.value) })}
                                         className="w-full bg-white px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                        placeholder="010-0000-0000"
+                                        maxLength={13}
                                     />
                                 ) : (
                                     <p className="font-bold text-gray-900">{profile.phoneNumber || '-'}</p>
@@ -354,9 +381,10 @@ export default function MyPage() {
                                     <input
                                         type="text"
                                         value={editForm.birthDate}
-                                        onChange={(e) => setEditForm({ ...editForm, birthDate: e.target.value })}
+                                        onChange={(e) => setEditForm({ ...editForm, birthDate: formatBirthDate(e.target.value) })}
                                         placeholder="YYYY-MM-DD"
                                         className="w-full bg-white px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+                                        maxLength={10}
                                     />
                                 ) : (
                                     <p className="font-bold text-gray-900">{profile.birthDate || '-'}</p>
@@ -439,7 +467,7 @@ export default function MyPage() {
                                         <input
                                             type="text"
                                             value={editForm.hashTags}
-                                            onChange={(e) => setEditForm({ ...editForm, hashTags: e.target.value })}
+                                            onChange={(e) => setEditForm({ ...editForm, hashTags: formatHashTags(e.target.value) })}
                                             placeholder="#음악 #합창"
                                             className="w-full bg-white px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
                                         />

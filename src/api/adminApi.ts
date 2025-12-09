@@ -6,7 +6,7 @@ export interface User {
     userId: number;
     email: string;
     name: string;
-    role: 'ADMIN' | 'MEMBER' | 'GUEST';
+    role: 'ADMIN' | 'MEMBER' | 'USER';
     part?: string;
     createdAt: string;
 }
@@ -35,7 +35,7 @@ export const getUsers = async (
 };
 
 // PATCH /api/admin/users/{userId}/role
-export const updateUserRole = async (userId: number, role: 'ADMIN' | 'MEMBER' | 'GUEST'): Promise<void> => {
+export const updateUserRole = async (userId: number, role: 'ADMIN' | 'MEMBER' | 'USER'): Promise<void> => {
     await axios.patch(`/api/admin/users/${userId}/role`, { role });
 };
 

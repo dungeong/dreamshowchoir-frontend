@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getUsers, updateUserRole, deleteUser, User } from '@/api/adminApi';
+import { getUsers, updateUserRole, deleteUser } from '@/api/adminApi';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -42,7 +42,7 @@ export default function UserListPage() {
     });
 
     const updateRoleMutation = useMutation({
-        mutationFn: ({ userId, role }: { userId: number; role: 'ADMIN' | 'MEMBER' | 'GUEST' }) =>
+        mutationFn: ({ userId, role }: { userId: number; role: 'ADMIN' | 'MEMBER' | 'USER' }) =>
             updateUserRole(userId, role),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
@@ -96,9 +96,9 @@ export default function UserListPage() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="ALL">전체</SelectItem>
-                            <SelectItem value="ADMIN">관리자 (ADMIN)</SelectItem>
+                            <SelectItem value="USER">가입자 (USER)</SelectItem>
                             <SelectItem value="MEMBER">정회원 (MEMBER)</SelectItem>
-                            <SelectItem value="GUEST">준회원 (GUEST)</SelectItem>
+                            <SelectItem value="ADMIN">관리자 (ADMIN)</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -156,16 +156,16 @@ export default function UserListPage() {
                                             defaultValue={user.role}
                                             onValueChange={(val) => updateRoleMutation.mutate({
                                                 userId: user.userId,
-                                                role: val as 'ADMIN' | 'MEMBER' | 'GUEST'
+                                                role: val as 'ADMIN' | 'MEMBER' | 'USER'
                                             })}
                                         >
                                             <SelectTrigger className="h-8 text-xs">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="ADMIN">관리자</SelectItem>
+                                                <SelectItem value="USER">가입자</SelectItem>
                                                 <SelectItem value="MEMBER">정회원</SelectItem>
-                                                <SelectItem value="GUEST">준회원</SelectItem>
+                                                <SelectItem value="ADMIN">관리자</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </TableCell>
