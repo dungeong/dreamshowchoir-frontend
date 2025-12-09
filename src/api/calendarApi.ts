@@ -44,8 +44,9 @@ export const getCalendarEvents = async (timeMin: string, timeMax: string, calend
             },
         });
         return response.data.items || [];
-    } catch (error) {
-        console.error(`Failed to fetch calendar events for ${calendarId}:`, error);
+    } catch (error: any) {
+        const errorMessage = error.response?.data?.error?.message || error.message;
+        console.error(`Failed to fetch calendar events for ${calendarId}: ${errorMessage}`);
         return [];
     }
 };

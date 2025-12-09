@@ -20,6 +20,7 @@ const IMAGE_BASE_URL = 'https://d33178k8dca6a2.cloudfront.net';
 import { Bell, CreditCard, User, FileText, LogOut, Edit2, Trash2, Check, X, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import axios from '@/lib/axios';
+import Swal from 'sweetalert2';
 
 export default function MyPage() {
     const router = useRouter();
@@ -150,17 +151,28 @@ export default function MyPage() {
     const isMemberOrAdmin = profile && (profile.role === 'MEMBER' || profile.role === 'ADMIN');
 
     const handleWithdraw = async () => {
-        if (!confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+        const result = await Swal.fire({
+            title: '정말 탈퇴하시겠습니까?',
+            html: '탈퇴 시 <scan class="text-red-600 font-bold">계정이 즉시 삭제</scan>되며,<br/>이후 <span class="text-red-600 font-bold">6개월 동안 재가입이 불가능</span>합니다.<br/><br/>이 작업은 되돌릴 수 없습니다.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: '네, 탈퇴합니다',
+            cancelButtonText: '취소'
+        });
+
+        if (!result.isConfirmed) return;
 
         try {
             await withdraw();
             localStorage.removeItem('auth_token');
             localStorage.removeItem('refresh_token');
-            alert('탈퇴가 완료되었습니다.');
+            await Swal.fire('탈퇴 완료', '회원 탈퇴가 처리되었습니다.', 'success');
             window.location.href = '/';
         } catch (error) {
             console.error('Failed to withdraw:', error);
-            alert('탈퇴 처리에 실패했습니다.');
+            Swal.fire('오류', '탈퇴 처리에 실패했습니다.', 'error');
         }
     };
 

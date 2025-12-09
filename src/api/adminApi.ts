@@ -51,9 +51,12 @@ export interface JoinApplication {
     userId: number;
     userName: string;
     userEmail: string;
+    userPhoneNumber: string;
     part: string;
     interests?: string;
     myDream?: string;
+    hashTags?: string;
+    profileImageKey?: string;
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
     createdAt: string;
 }
@@ -77,4 +80,47 @@ export const getJoinApplications = async (page: number = 0, size: number = 10): 
 // PATCH /api/admin/join-applications/{joinId}
 export const updateJoinStatus = async (joinId: number, status: 'APPROVED' | 'REJECTED'): Promise<void> => {
     await axios.patch(`/api/admin/join-applications/${joinId}`, { status });
+};
+
+// -- Donation Management --
+
+export type DonationStatus = 'PENDING' | 'COMPLETED' | 'FAILED';
+export type DonationType = 'REGULAR' | 'ONE_TIME';
+
+export interface Donation {
+    donationId: number;
+    userName: string;
+    userEmail: string;
+    userPhoneNumber: string;
+    amount: number;
+    type: DonationType;
+    status: DonationStatus;
+    createdAt: string;
+}
+
+export interface DonationResponse {
+    content: Donation[];
+    totalPages: number;
+    totalElements: number;
+    page: number;
+    size: number;
+}
+
+// GET /api/admin/donations
+export const getDonations = async (
+    page: number = 0,
+    size: number = 10,
+    status?: DonationStatus | 'ALL'
+): Promise<DonationResponse> => {
+    const params: any = { page, size, sort: 'createdAt,desc' };
+    if (status && status !== 'ALL') {
+        params.status = status;
+    }
+    const response = await axios.get('/api/admin/donations', { params });
+    return response.data;
+};
+
+// PATCH /api/admin/donations/{donationId}
+export const updateDonationStatus = async (donationId: number, status: DonationStatus): Promise<void> => {
+    await axios.patch(`/api/admin/donations/${donationId}`, { status });
 };

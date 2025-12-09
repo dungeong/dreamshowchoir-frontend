@@ -62,15 +62,22 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
 
                     <section>
                         <h4 className="font-bold text-xl mb-2">제3조 (개인정보의 보유 및 이용 기간)</h4>
-                        <ul className="list-disc pl-5 space-y-1">
-                            <li><strong>회원 탈퇴 시 즉시 파기</strong></li>
-                            <li>다만, 관련 법령에 따라 필요한 경우 아래와 같이 보관:
+                        <ol className="list-decimal pl-5 space-y-1">
+                            <li>단체는 원칙적으로 이용자의 회원 탈퇴 요청 시 수집된 개인정보를 <strong>즉시 파기</strong>합니다.</li>
+                            <li>단, <strong>부정 이용 방지 및 서비스 혼선 방지</strong>를 위해 <strong>내부 방침</strong>에 따라 아래 정보를 일정 기간 보관합니다:
                                 <ul className="list-circle pl-5 mt-1 space-y-1">
-                                    <li>후원 및 결제 기록 : 5년 (전자상거래 등에서의 소비자 보호에 관한 법률)</li>
-                                    <li>로그인 기록(IP, 접속일시 등) : 3개월 (통신비밀보호법)</li>
+                                    <li><strong>보존 항목</strong>: OAuth 제공자, OAuth ID, 이메일(식별용), 탈퇴 일시</li>
+                                    <li><strong>보존 사유</strong>: 불량 회원의 부정한 이용 재발 방지, 악의적 재가입 제한, 서비스 운영의 혼선 방지</li>
+                                    <li><strong>보존 기간</strong>: <strong>탈퇴일로부터 6개월</strong></li>
                                 </ul>
                             </li>
-                        </ul>
+                            <li>관련 법령에 따라 보존이 필요한 경우, 아래와 같이 해당 기간 동안 보관합니다:
+                                <ul className="list-circle pl-5 mt-1 space-y-1">
+                                    <li><strong>후원 및 결제 기록</strong>: 5년 (전자상거래 등에서의 소비자 보호에 관한 법률)</li>
+                                    <li><strong>로그인 기록(IP, 접속일시 등)</strong>: 3개월 (통신비밀보호법)</li>
+                                </ul>
+                            </li>
+                        </ol>
                     </section>
 
                     <section>
@@ -118,10 +125,8 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
 
                     <section>
                         <h4 className="font-bold text-xl mb-2">제9조 (개인정보 보호책임자)</h4>
-                        <ul className="list-disc pl-5 space-y-1">
-                            <li><strong>개인정보 보호책임자</strong>: 이동영</li>
-                            <li><strong>연락처</strong>: 이메일: dreamshowchoir0524@gmail.com, 전화: 010-2535-2095</li>
-                        </ul>
+                        <p><strong>개인정보 보호책임자</strong>: 이동영</p>
+                        <p><strong>연락처</strong>: 이메일: dreamshowchoir0524@gmail.com, 전화: 010-2535-2095</p>
                     </section>
 
                     <section>
@@ -136,7 +141,7 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
                     <section>
                         <h4 className="font-bold text-xl mb-2">제11조 (이의 제기 및 분쟁 해결)</h4>
                         <ol className="list-decimal pl-5 space-y-1">
-                            <li>이용자는 개인정보 처리에 대한 이의가 있을 경우, 개인정보 보호책임자에게 문의할 수 있습니다.</li>
+                            <li>이용자는 개인정보 처리에 대한 이의가 있을 경우, 개인정보 보호책임자(<strong>이동영</strong>)에게 문의할 수 있습니다.</li>
                             <li>분쟁이 발생할 경우, <strong>한국소비자원(www.kca.go.kr, 1372)</strong> 또는 <strong>개인정보 분쟁조정위원회</strong>를 통해 해결할 수 있습니다.</li>
                             <li>단체와 이용자 간의 분쟁은 대한민국 법률에 따라 서울중앙지방법원을 관할로 합니다.</li>
                         </ol>

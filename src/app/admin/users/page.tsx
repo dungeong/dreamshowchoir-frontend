@@ -120,12 +120,12 @@ export default function UserListPage() {
                 <Table>
                     <TableHeader className="bg-gray-50">
                         <TableRow>
-                            <TableHead className="w-[80px]">No</TableHead>
+                            <TableHead className="w-[80px] pl-6">No</TableHead>
                             <TableHead>이름 / 이메일</TableHead>
                             <TableHead>파트</TableHead>
                             <TableHead className="w-[180px]">권한</TableHead>
                             <TableHead className="w-[150px]">가입일</TableHead>
-                            <TableHead className="w-[100px] text-right">관리</TableHead>
+                            <TableHead className="w-[100px] text-right pr-6">관리</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -140,9 +140,9 @@ export default function UserListPage() {
                         ) : data?.content && data.content.length > 0 ? (
                             data.content.map((user, index) => (
                                 <TableRow key={user.userId}>
-                                    <TableCell className="font-medium">
+                                    <TableCell className="font-medium pl-6">
                                         {/* Calculate index based on page */}
-                                        {data.totalElements - (page * data.size) - index}
+                                        {(data.totalElements || 0) - (page * (data.size || 10)) - index}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col">
@@ -172,7 +172,7 @@ export default function UserListPage() {
                                     <TableCell className="text-gray-500">
                                         {new Date(user.createdAt).toLocaleDateString()}
                                     </TableCell>
-                                    <TableCell className="text-right">
+                                    <TableCell className="text-right pr-6">
                                         <Button
                                             variant="ghost"
                                             size="icon"

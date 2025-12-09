@@ -70,7 +70,7 @@ export function TermsOfServiceModal({ isOpen, onClose }: TermsOfServiceModalProp
 
                     <section>
                         <h4 className="font-bold text-xl mb-2">제5조 (개인정보 보호)</h4>
-                        <p>단체는 이용자의 개인정보를 「개인정보보호법」 및 관련 법령에 따라 안전하게 관리하며, 개인정보취급방침에 따릅니다. 개인정보는 단체의 개인정보 보호책임자(이동영, 이메일 : dreamshowchoir0524@gmail.com, 전화 : 010-2535-2095)가 관리하며, 열람/수정/삭제 요청은 마이페이지 또는 문의로 가능합니다.</p>
+                        <p>단체는 이용자의 개인정보를 「개인정보보호법」 및 관련 법령에 따라 안전하게 관리하며, 개인정보취급방침에 따릅니다. <strong>특히 회원 탈퇴 시 개인정보는 즉시 파기하는 것을 원칙으로 하나, 부정 이용 방지 및 서비스 혼선 방지를 위해 일부 정보(OAuth ID, 이메일 등)는 탈퇴일로부터 6개월간 보관됩니다.</strong> 개인정보는 단체의 개인정보 보호책임자(이동영, 이메일 : dreamshowchoir0524@gmail.com, 전화 : 010-2535-2095)가 관리하며, 열람/수정/삭제 요청은 마이페이지 또는 문의로 가능합니다.</p>
                     </section>
 
                     <section>
