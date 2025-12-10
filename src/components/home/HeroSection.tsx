@@ -2,20 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getBanners } from '@/api/bannerApi';
+import { getBanners, BannerDto } from '@/api/bannerApi';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface Banner {
-    id: number;
-    imageUrl: string;
-    linkUrl: string;
-    title?: string;
-    description?: string;
-}
-
 export function HeroSection() {
-    const [banners, setBanners] = useState<Banner[]>([]);
+    const [banners, setBanners] = useState<BannerDto[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
 
@@ -50,8 +42,15 @@ export function HeroSection() {
     if (loading) return <div className="h-[600px] w-full bg-gray-100 animate-pulse" />;
 
     // Fallback if no banners
-    const displayBanners = banners.length > 0 ? banners : [
-        { id: 0, imageUrl: '/placeholder-hero.jpg', title: '꿈을 노래하다', description: 'Dream Show Choir', linkUrl: '#' }
+    const displayBanners: BannerDto[] = banners.length > 0 ? banners : [
+        {
+            bannerId: 0,
+            imageUrl: '/placeholder-hero.jpg',
+            title: '꿈을 노래하다',
+            description: 'Dream Show Choir',
+            orderIndex: 0,
+            isActive: true
+        }
     ];
 
     return (

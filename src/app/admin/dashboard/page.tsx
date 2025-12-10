@@ -100,7 +100,7 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {dashboard?.upcomingSchedules?.length > 0 ? (
+                            {dashboard?.upcomingSchedules.length > 0 ? (
                                 dashboard.upcomingSchedules.map((schedule) => (
                                     <div key={schedule.id} className="flex items-center justify-between border-b border-gray-100 pb-2 last:border-0 last:pb-0">
                                         <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export default function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {dashboard?.recentPosts?.length > 0 ? (
+                            {dashboard?.recentPosts.length > 0 ? (
                                 dashboard.recentPosts.map((post) => (
                                     <div key={post.postId} className="flex flex-col gap-1 border-b border-gray-100 pb-2 last:border-0 last:pb-0">
                                         <div className="flex justify-between items-start">

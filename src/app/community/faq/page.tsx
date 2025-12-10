@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState, useEffect } from 'react';
-import { getFaqs, Faq } from '@/api/faqApi';
+import { getFaqList, Faq } from '@/api/faqApi';
 import {
     Accordion,
     AccordionContent,
@@ -17,7 +17,7 @@ function FaqContent() {
     useEffect(() => {
         const fetchFaqs = async () => {
             try {
-                const data = await getFaqs();
+                const data = await getFaqList();
                 setFaqs(data);
             } catch (error) {
                 console.error("Failed to fetch FAQs", error);
@@ -51,7 +51,7 @@ function FaqContent() {
                                     </div>
                                 </AccordionTrigger>
                                 <AccordionContent className="pt-4 pb-4 pl-11 pr-4 text-gray-600 bg-gray-50/50 rounded-b-lg">
-                                    <p className="whitespace-pre-wrap leading-relaxed">{faq.answer}</p>
+                                    <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: faq.answer }} />
                                 </AccordionContent>
                             </AccordionItem>
                         ))}

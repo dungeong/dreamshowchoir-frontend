@@ -14,7 +14,8 @@ import {
     LogOut,
     ChevronDown,
     ChevronRight,
-    Settings
+    Settings,
+    Calendar
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -85,6 +86,7 @@ const MENU_ITEMS: MenuItem[] = [
             { title: '문의 관리', href: '/admin/inquiries' },
             { title: 'FAQ 관리', href: '/admin/communication/faq' },
             { title: '배너 관리', href: '/admin/communication/banners' },
+            { title: '일정 관리', href: '/admin/schedules' },
         ],
     },
 ];
