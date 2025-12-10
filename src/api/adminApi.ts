@@ -89,9 +89,9 @@ export type DonationType = 'REGULAR' | 'ONE_TIME';
 
 export interface Donation {
     donationId: number;
-    userName: string;
-    userEmail: string;
-    userPhoneNumber: string;
+    donorName: string | null;
+    donorEmail: string | null;
+    donorPhone: string | null;
     amount: number;
     type: DonationType;
     status: DonationStatus;

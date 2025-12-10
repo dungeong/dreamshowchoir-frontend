@@ -21,8 +21,11 @@ function AuthCallbackContent() {
             });
 
             if (accessToken) {
-                // 2. Store token
-                localStorage.setItem('auth_token', accessToken);
+                // 2. Store token in AuthStore (which implicitly handles localStorage via persist)
+                // We access the store directly to ensure it updates before verify request
+                const { useAuthStore } = await import('@/store/authStore');
+                useAuthStore.getState().setAccessToken(accessToken);
+
                 if (refreshToken) {
                     localStorage.setItem('refresh_token', refreshToken);
                 }

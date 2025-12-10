@@ -78,13 +78,14 @@ function InquiryDetailContent() {
                             ) : (
                                 <span className="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full font-bold">대기중</span>
                             )}
-                            {inquiry.isSecret && <Lock className="w-4 h-4 text-gray-400" />}
+                            {/* {inquiry.isSecret && <Lock className="w-4 h-4 text-gray-400" />} */}
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900">{inquiry.title}</h1>
+                        {/* Title removed, using content truncated or just header */}
+                        <h1 className="text-2xl font-bold text-gray-900 line-clamp-1">{inquiry.content}</h1>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                             <div className="flex items-center gap-1">
                                 <User className="w-4 h-4" />
-                                <span>{inquiry.authorName}</span>
+                                <span>{inquiry.name}</span>
                             </div>
                             <div className="flex items-center gap-1">
                                 <Calendar className="w-4 h-4" />

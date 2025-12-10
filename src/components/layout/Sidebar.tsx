@@ -74,8 +74,7 @@ const MENU_ITEMS: MenuItem[] = [
         icon: Info,
         children: [
             { title: '연혁 관리', href: '/admin/site/history' },
-            { title: '인사말 관리', href: '/admin/site/greeting' },
-            { title: '조직도 관리', href: '/admin/site/organization' },
+            { title: '사이트 콘텐츠 관리', href: '/admin/site/contents' },
         ],
     },
     {
@@ -83,7 +82,7 @@ const MENU_ITEMS: MenuItem[] = [
         href: '/admin/communication',
         icon: MessageCircle,
         children: [
-            { title: '문의 관리', href: '/admin/communication/inquiries' },
+            { title: '문의 관리', href: '/admin/inquiries' },
             { title: 'FAQ 관리', href: '/admin/communication/faq' },
             { title: '배너 관리', href: '/admin/communication/banners' },
         ],

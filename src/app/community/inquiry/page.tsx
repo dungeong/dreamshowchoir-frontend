@@ -70,19 +70,20 @@ function InquiryListContent() {
                                 >
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2">
-                                            {inquiry.isSecret && <Lock className="w-4 h-4 text-gray-400" />}
-                                            <h3 className="font-medium text-gray-900 group-hover:text-primary transition-colors">
-                                                {inquiry.title}
+                                            {/* {inquiry.isSecret && <Lock className="w-4 h-4 text-gray-400" />} */}
+                                            <h3 className="font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
+                                                {/* Use content truncated as title since title is removed */}
+                                                {inquiry.content}
                                             </h3>
                                             {inquiry.status === 'ANSWERED' && (
                                                 <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">답변완료</span>
                                             )}
-                                            {inquiry.status === 'WAITING' && (
+                                            {inquiry.status === 'PENDING' && (
                                                 <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-bold">대기중</span>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-3 text-sm text-gray-500">
-                                            <span>{inquiry.authorName}</span>
+                                            <span>{inquiry.name}</span>
                                             <span>•</span>
                                             <span>{new Date(inquiry.createdAt).toLocaleDateString()}</span>
                                         </div>

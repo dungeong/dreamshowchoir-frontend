@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getMyProfile, UserProfile } from '@/api/memberApi';
+import { useAuthStore } from '@/store/authStore';
 
 interface MenuItem {
     label: string;
@@ -87,10 +88,12 @@ export default function Header() {
     const pathname = usePathname();
 
     // -- Auth Check --
+    const { accessToken, logout } = useAuthStore();
+
+    // -- Auth Check --
     useEffect(() => {
         const checkAuth = async () => {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
+            if (!accessToken) {
                 setUser(null);
                 setLoading(false);
                 return;
@@ -101,21 +104,20 @@ export default function Header() {
             } catch (error) {
                 console.error('Failed to fetch profile:', error);
                 // If token is invalid, clear it
-                localStorage.removeItem('auth_token');
+                logout();
                 setUser(null);
             } finally {
                 setLoading(false);
             }
         };
         checkAuth();
-    }, [pathname]); // Re-check on route change if needed, or just initial load. 
-    // Usually auth state is global (Context), but per request we mock strict UI + simple hook feel.
+    }, [accessToken]); // React to token changes
 
     const handleLogout = () => {
-        localStorage.removeItem('auth_token');
+        logout();
         setUser(null);
         router.push('/');
-        window.location.reload(); // Ensure nice full reset
+        // window.location.reload(); // Not needed if store is reactive, but ensures clean slate
     };
 
     // Close mobile menu when route changes

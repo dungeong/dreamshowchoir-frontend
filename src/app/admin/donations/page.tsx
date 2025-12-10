@@ -23,7 +23,7 @@ import { Loader2, Star, CheckCircle, XCircle, RotateCcw } from 'lucide-react';
 export default function DonationManagementPage() {
     const queryClient = useQueryClient();
     const [page, setPage] = useState(0);
-    const [activeTab, setActiveTab] = useState<'ALL' | DonationStatus>('ALL');
+    const [activeTab, setActiveTab] = useState<DonationStatus>('PENDING');
 
     const { data, isLoading } = useQuery({
         queryKey: ['admin-donations', page, activeTab],
@@ -67,8 +67,7 @@ export default function DonationManagementPage() {
         }
     };
 
-    const tabs: { label: string; value: 'ALL' | DonationStatus }[] = [
-        { label: '전체', value: 'ALL' },
+    const tabs: { label: string; value: DonationStatus }[] = [
         { label: '대기', value: 'PENDING' },
         { label: '완료', value: 'COMPLETED' },
         { label: '실패/취소', value: 'FAILED' },
@@ -105,8 +104,8 @@ export default function DonationManagementPage() {
                             setPage(0); // Reset page on tab change
                         }}
                         className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${activeTab === tab.value
-                                ? 'border-primary text-primary'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                            ? 'border-primary text-primary'
+                            : 'border-transparent text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         {tab.label}
@@ -144,9 +143,15 @@ export default function DonationManagementPage() {
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-gray-900">{donation.userName}</span>
-                                            <span className="text-xs text-gray-500">{donation.userEmail}</span>
-                                            <span className="text-xs text-gray-400">{donation.userPhoneNumber}</span>
+                                            {donation.donorName ? (
+                                                <>
+                                                    <span className="font-medium text-gray-900">{donation.donorName}</span>
+                                                    <span className="text-xs text-gray-500">{donation.donorEmail}</span>
+                                                    <span className="text-xs text-gray-400">{donation.donorPhone}</span>
+                                                </>
+                                            ) : (
+                                                <span className="font-medium text-gray-400 italic">탈퇴한 계정</span>
+                                            )}
                                         </div>
                                     </TableCell>
                                     <TableCell className="text-center">
