@@ -7,7 +7,7 @@ const links = [
     {
         title: '신입단원모집',
         description: '단원 모집 안내 바로가기',
-        href: '/join/recruitment',
+        href: '/join/recruit',
         icon: Users,
         color: 'bg-blue-100 text-blue-600',
     },

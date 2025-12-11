@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getMyProfile } from '@/api/memberApi';
+import { useAuthStore } from '@/store/authStore';
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
@@ -10,8 +11,14 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const token = localStorage.getItem('auth_token');
-            if (!token) return;
+            // Correctly access token from store
+            // Note: The persist middleware stores it in 'auth-storage' in localStorage, but using the hook/store is cleaner.
+            // However, inside useEffect, we can use useAuthStore.getState()
+            // But wait, we should check if we persist locally differently.
+            // The previous issue was localStorage key mismatch.
+            // Use useAuthStore.getState().accessToken
+            const { accessToken } = useAuthStore.getState();
+            if (!accessToken) return;
 
             try {
                 const profile = await getMyProfile();
@@ -21,13 +28,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
                     console.log('GUEST user attempted to access restricted page, redirecting to /signup');
                     router.replace('/signup');
                 }
-
-                // Optional: If user is NOT GUEST but tries to access signup, redirect to mypage
-                // if (profile.role !== 'GUEST' && pathname === '/signup') {
-                //     router.replace('/mypage');
-                // }
-            } catch (error) {
-                console.error('Auth check failed:', error);
+            } catch (error: any) {
+                // Suppress 401 errors as they are handled by axios interceptor (redirect to login)
+                if (error.response?.status !== 401) {
+                    console.error('Auth check failed:', error);
+                }
             }
         };
 

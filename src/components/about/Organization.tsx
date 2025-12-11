@@ -38,7 +38,7 @@ export function Organization() {
 
     return (
         <div className="flex flex-col items-center space-y-8 py-8">
-            <h3 className="text-2xl font-bold text-primary sr-only">{data.title}</h3>
+            <h3 className="text-2xl font-bold text-primary sr-only">조직도</h3>
             <div className="w-full max-w-4xl bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
                 <img
                     src={data.content}

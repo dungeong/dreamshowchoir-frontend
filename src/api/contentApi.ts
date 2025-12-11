@@ -2,7 +2,6 @@ import axios from '@/lib/axios';
 
 export interface ContentResponse {
     contentKey: string;
-    title: string;
     content: string;
     updatedAt: string;
 }

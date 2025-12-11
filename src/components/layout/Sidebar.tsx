@@ -15,7 +15,8 @@ import {
     ChevronDown,
     ChevronRight,
     Settings,
-    Calendar
+    Calendar,
+    X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -91,17 +92,16 @@ const MENU_ITEMS: MenuItem[] = [
     },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
 
     // State for collapsing submenus
-    // Initialize with all open or specifically based on path could be better, 
-    // but simplifying to keep track of open sections.
-    // Defaulting to open all or specific logic? Let's keep it simple: allow toggling.
-    // To have them "highlighted", we essentially need to know if a child is active.
-
-    // We can track expanded items by index or ID (title).
     const [expandedItems, setExpandedItems] = useState<string[]>(MENU_ITEMS.map(item => item.title));
 
     const toggleExpand = (title: string) => {
@@ -116,7 +116,7 @@ export function Sidebar() {
         if (confirm('로그아웃 하시겠습니까?')) {
             localStorage.removeItem('auth_token');
             router.push('/');
-            router.refresh(); // Or window.location.reload()
+            router.refresh();
         }
     };
 
@@ -128,13 +128,25 @@ export function Sidebar() {
     };
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col z-40 shadow-sm">
+        <aside
+            className={cn(
+                "fixed left-0 top-20 h-[calc(100vh-5rem)] w-64 bg-white border-r border-gray-200 flex flex-col z-50 shadow-sm transition-transform duration-300 ease-in-out",
+                isOpen ? "translate-x-0" : "-translate-x-full 2xl:translate-x-0"
+            )}
+        >
             {/* Logo Area */}
-            <div className="h-20 flex items-center justify-center border-b border-gray-100 px-6">
+            <div className="h-20 flex items-center justify-between border-b border-gray-100 px-6">
                 <Link href="/admin" className="flex flex-col items-center">
                     <h1 className="text-xl font-bold text-gray-900 tracking-tight">Admin Page</h1>
                     <span className="text-xs text-gray-500">드림쇼콰이어 관리자</span>
                 </Link>
+                {/* Mobile Close Button */}
+                <button
+                    onClick={onClose}
+                    className="2xl:hidden p-1 text-gray-500 hover:text-gray-900 rounded-md hover:bg-gray-100"
+                >
+                    <X size={20} />
+                </button>
             </div>
 
             {/* Menu Items */}

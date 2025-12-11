@@ -20,7 +20,7 @@ export interface ApplicationForm {
 }
 
 export const getMyApplication = async (): Promise<JoinApplication[]> => {
-    const response = await axios.get('/api/join/my');
+    const response = await axios.get('/api/join/me');
     // Ensure we return an array
     return Array.isArray(response.data) ? response.data : [response.data].filter(Boolean);
 };

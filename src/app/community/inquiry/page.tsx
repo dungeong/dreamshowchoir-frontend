@@ -1,137 +1,167 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { getInquiries, Inquiry } from '@/api/inquiryApi';
+import { Suspense, useState, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { submitInquiry } from '@/api/inquiryApi';
 import { Button } from '@/components/ui/button';
-import { Loader2, ChevronLeft, ChevronRight, MessageCircle, Lock } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2 } from 'lucide-react';
+import Swal from 'sweetalert2';
 
-function InquiryListContent() {
-    const router = useRouter();
-    const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const currentPage = Number(searchParams.get('page')) || 0;
+const inquirySchema = z.object({
+    name: z.string().min(1, '이름을 입력해주세요.'),
+    email: z.string().email('올바른 이메일 형식이 아닙니다.'),
+    content: z.string().min(1, '내용을 입력해주세요.').max(1000, '1000자 이내로 입력해주세요.'),
+});
 
-    const [inquiries, setInquiries] = useState<Inquiry[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [totalPages, setTotalPages] = useState(0);
+type InquiryFormValues = z.infer<typeof inquirySchema>;
 
-    useEffect(() => {
-        fetchInquiries(currentPage);
-    }, [currentPage]);
+function InquiryForm() {
+    const { executeRecaptcha } = useGoogleReCaptcha();
+    const [submitting, setSubmitting] = useState(false);
 
-    const fetchInquiries = async (page: number) => {
-        setLoading(true);
-        try {
-            const data = await getInquiries(page, 10);
-            setInquiries(data.content || []);
-            setTotalPages(data.totalPages);
-        } catch (error) {
-            console.error("Failed to fetch inquiries", error);
-            setInquiries([]);
-        } finally {
-            setLoading(false);
+    const { register, handleSubmit, reset, formState: { errors } } = useForm<InquiryFormValues>({
+        resolver: zodResolver(inquirySchema)
+    });
+
+    const onSubmit = useCallback(async (data: InquiryFormValues) => {
+        if (!executeRecaptcha) {
+            Swal.fire({
+                icon: 'warning',
+                title: '로딩 중',
+                text: '보안 확인을 위해 잠시만 기다려주세요.',
+            });
+            return;
         }
-    };
 
-    const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(searchParams);
-        params.set('page', newPage.toString());
-        router.push(`${pathname}?${params.toString()}`);
-    };
+        setSubmitting(true);
+        try {
+            // 1. Get reCAPTCHA Token
+            const token = await executeRecaptcha('inquiry_submit');
+
+            if (!token) {
+                throw new Error('reCAPTCHA verifying failed');
+            }
+
+            // 2. Submit Authorization
+            await submitInquiry({
+                ...data,
+                recaptchaToken: token
+            });
+
+            await Swal.fire({
+                icon: 'success',
+                title: '문의 접수 완료',
+                text: '담당자 확인 후 빠르게 답변 드리겠습니다.',
+                confirmButtonColor: '#000000',
+            });
+            reset();
+        } catch (error) {
+            console.error("Failed to submit inquiry", error);
+            Swal.fire({
+                icon: 'error',
+                title: '오류 발생',
+                text: '문의 접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                confirmButtonColor: '#d33',
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    }, [executeRecaptcha, reset]);
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 py-8 px-4">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">문의하기</h1>
-                    <p className="text-gray-500 mt-2">궁금한 점을 남겨주시면 답변해드립니다.</p>
+        <div className="max-w-2xl mx-auto space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">문의하기</h1>
+                <p className="text-gray-600">
+                    궁금하신 점을 남겨주시면 친절하게 답변해드리겠습니다.
+                </p>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="space-y-2">
+                    <label htmlFor="name" className="text-sm font-medium text-gray-700">이름</label>
+                    <Input
+                        id="name"
+                        placeholder="이름을 입력하세요"
+                        {...register('name')}
+                        disabled={submitting}
+                    />
+                    {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
                 </div>
-                <Link href="/community/inquiry/write">
-                    <Button>문의글 작성</Button>
-                </Link>
-            </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                {loading ? (
-                    <div className="flex justify-center py-20">
-                        <Loader2 className="animate-spin h-10 w-10 text-primary" />
-                    </div>
-                ) : inquiries.length > 0 ? (
-                    <>
-                        <div className="divide-y divide-gray-100">
-                            {inquiries.map((inquiry) => (
-                                <div
-                                    key={inquiry.inquiryId} // Assuming API returns inquiryId based on my api definition
-                                    onClick={() => router.push(`/community/inquiry/${inquiry.inquiryId}`)}
-                                    className="p-6 hover:bg-gray-50 transition-colors cursor-pointer group flex items-center justify-between"
-                                >
-                                    <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            {/* {inquiry.isSecret && <Lock className="w-4 h-4 text-gray-400" />} */}
-                                            <h3 className="font-medium text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
-                                                {/* Use content truncated as title since title is removed */}
-                                                {inquiry.content}
-                                            </h3>
-                                            {inquiry.status === 'ANSWERED' && (
-                                                <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-bold">답변완료</span>
-                                            )}
-                                            {inquiry.status === 'PENDING' && (
-                                                <span className="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded-full font-bold">대기중</span>
-                                            )}
-                                        </div>
-                                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                                            <span>{inquiry.name}</span>
-                                            <span>•</span>
-                                            <span>{new Date(inquiry.createdAt).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" />
-                                </div>
-                            ))}
-                        </div>
+                <div className="space-y-2">
+                    <label htmlFor="email" className="text-sm font-medium text-gray-700">이메일</label>
+                    <Input
+                        id="email"
+                        type="email"
+                        placeholder="답변 받으실 이메일을 입력하세요"
+                        {...register('email')}
+                        disabled={submitting}
+                    />
+                    {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+                </div>
 
-                        {/* Pagination */}
-                        {totalPages > 1 && (
-                            <div className="p-4 border-t border-gray-100 flex justify-center gap-2">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => handlePageChange(Math.max(0, currentPage - 1))}
-                                    disabled={currentPage === 0}
-                                >
-                                    <ChevronLeft className="h-4 w-4" />
-                                </Button>
-                                <span className="flex items-center px-4 font-medium text-sm">
-                                    {currentPage + 1} / {totalPages}
-                                </span>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => handlePageChange(Math.min(totalPages - 1, currentPage + 1))}
-                                    disabled={currentPage === totalPages - 1}
-                                >
-                                    <ChevronRight className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <div className="text-center py-20 text-gray-500">
-                        등록된 문의가 없습니다.
-                    </div>
-                )}
-            </div>
+                <div className="space-y-2">
+                    <label htmlFor="content" className="text-sm font-medium text-gray-700">문의 내용</label>
+                    <Textarea
+                        id="content"
+                        placeholder="문의하실 내용을 자유롭게 적어주세요"
+                        className="min-h-[200px] resize-none"
+                        {...register('content')}
+                        disabled={submitting}
+                    />
+                    {errors.content && <p className="text-xs text-red-500">{errors.content.message}</p>}
+                </div>
+
+                <Button type="submit" className="w-full h-12 text-lg" disabled={submitting}>
+                    {submitting ? (
+                        <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            전송 중...
+                        </>
+                    ) : (
+                        '문의하기'
+                    )}
+                </Button>
+            </form>
+
+            <p className="text-xs text-center text-gray-400 mt-4">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline mx-1">Privacy Policy</a> and
+                <a href="https://policies.google.com/terms" target="_blank" rel="noreferrer" className="text-blue-500 hover:underline mx-1">Terms of Service</a> apply.
+            </p>
         </div>
     );
 }
 
-export default function InquiryListPage() {
+export default function InquiryPage() {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+    if (!siteKey) {
+        console.error("NEXT_PUBLIC_RECAPTCHA_SITE_KEY is not defined in environment variables.");
+        return (
+            <div className="flex justify-center items-center h-[50vh] text-red-500 bg-red-50 rounded-xl p-8 max-w-lg mx-auto border border-red-100">
+                <div>
+                    <h3 className="font-bold text-lg mb-2">설정 오류</h3>
+                    <p>reCAPTCHA Site Key가 설정되지 않았습니다.</p>
+                    <p className="text-sm mt-2 text-gray-600">관리자에게 문의해주세요.</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="animate-spin h-10 w-10 text-primary" /></div>}>
-            <InquiryListContent />
-        </Suspense>
+        <GoogleReCaptchaProvider reCaptchaKey={siteKey}>
+            <div className="px-4 py-8">
+                <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="animate-spin h-10 w-10 text-primary" /></div>}>
+                    <InquiryForm />
+                </Suspense>
+            </div>
+        </GoogleReCaptchaProvider>
     );
 }

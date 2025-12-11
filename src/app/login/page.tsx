@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useAuthStore } from '@/store/authStore';
 
 function LoginContent() {
     const searchParams = useSearchParams();
@@ -16,6 +17,15 @@ function LoginContent() {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
         window.location.href = `${apiUrl}/oauth2/authorization/${provider}`;
     };
+
+    // Redirect if already logged in
+    // Check store state directly to avoid hydration flicker effects
+    if (typeof window !== 'undefined' && useAuthStore.getState().accessToken) {
+        const returnUrl = searchParams.get('returnUrl') || '/';
+        // Use window.location to ensure full state reset or router.push
+        window.location.href = returnUrl;
+        return null;
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

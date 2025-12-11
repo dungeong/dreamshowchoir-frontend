@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getContent, ContentResponse } from '@/api/contentApi';
 import { SafeHtml } from '@/components/ui/safe-html';
+import 'react-quill-new/dist/quill.snow.css'; // Import Quill styles
 
 export function Greetings() {
     const [data, setData] = useState<ContentResponse | null>(null);
@@ -40,10 +41,12 @@ export function Greetings() {
     return (
         <div className="space-y-8">
             <div className="w-full space-y-6">
-                <h3 className="text-2xl font-bold text-primary">
-                    {data.title}
-                </h3>
-                <div className="text-gray-600 leading-relaxed">
+                {/* Header "인사말" removed as it is rendered by AboutLayout */}
+                {/* 
+                    Added prose classes for typography and view-quill-content/ql-editor for Quill support.
+                    prose-headings:text-primary ensures headings match the theme.
+                */}
+                <div className="prose prose-lg max-w-none prose-headings:text-primary text-gray-600 leading-relaxed view-quill-content ql-editor px-0">
                     <SafeHtml html={data.content} />
                 </div>
                 <div className="pt-4 font-bold text-right text-lg">

@@ -135,18 +135,20 @@ export default function Header() {
 
                 {/* 1. Logo */}
                 <Link href="/" className="flex items-center gap-2">
-                    {/* Placeholder for Logo Image - Using Text as fallback/primary for now */}
-                    <div className="flex flex-col items-start leading-tight">
-                        {/* <img src="/logo.png" alt="Dream Show Choir" className="h-10 w-auto" /> */}
-                        {/* User requested text if image not available */}
-                        <span className="text-xl md:text-2xl font-bold text-yellow-500 tracking-tight">
-                            사회적협동조합 드림쇼콰이어
-                        </span>
+                    <div className="relative h-16 w-auto">
+                        <img
+                            src="/images/logo.png"
+                            alt="Dream Show Choir"
+                            className="h-full w-auto object-contain"
+                        />
                     </div>
+                    <span className="text-xl md:text-2xl font-bold text-yellow-500 tracking-tight hidden sm:block">
+                        사회적협동조합 드림쇼콰이어
+                    </span>
                 </Link>
 
                 {/* 2. Desktop Navigation (Center) */}
-                <nav className="hidden lg:flex items-center gap-8">
+                <nav className="hidden 2xl:flex items-center gap-8">
                     {MENU_ITEMS.map((item, index) => (
                         <div key={index} className="relative group p-4 cursor-pointer">
                             <Link
@@ -178,7 +180,7 @@ export default function Header() {
                 </nav>
 
                 {/* 3. Auth Buttons (Right) */}
-                <div className="hidden lg:flex items-center gap-4">
+                <div className="hidden 2xl:flex items-center gap-4">
                     {!loading && (
                         <>
                             {user ? (
@@ -224,7 +226,7 @@ export default function Header() {
 
                 {/* 4. Mobile Menu Toggle */}
                 <button
-                    className="lg:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-md"
+                    className="2xl:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-md"
                     onClick={() => setIsMobileMenuOpen(true)}
                 >
                     <Menu size={28} />
@@ -233,7 +235,7 @@ export default function Header() {
 
             {/* -- Mobile Drawer -- */}
             {isMobileMenuOpen && (
-                <div className="fixed inset-0 z-[60] bg-black/50 lg:hidden" onClick={() => setIsMobileMenuOpen(false)}>
+                <div className="fixed inset-0 z-[60] bg-black/50 2xl:hidden" onClick={() => setIsMobileMenuOpen(false)}>
                     <div
                         className="absolute right-0 top-0 h-full w-[80%] max-w-sm bg-white shadow-2xl p-6 overflow-y-auto duration-300 animate-in slide-in-from-right"
                         onClick={(e) => e.stopPropagation()}

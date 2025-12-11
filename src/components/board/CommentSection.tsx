@@ -110,8 +110,12 @@ export function CommentSection({ postId }: CommentSectionProps) {
                 <form onSubmit={handleSubmit} className="mb-8 bg-gray-50 p-4 rounded-xl">
                     <div className="flex gap-4">
                         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 border border-gray-200 overflow-hidden">
-                            {currentUser.profileImageUrl ? (
-                                <img src={currentUser.profileImageUrl} alt={currentUser.name} className="w-full h-full object-cover" />
+                            {(currentUser.profileImageUrl || currentUser.profileImageKey) ? (
+                                <img
+                                    src={currentUser.profileImageUrl || (currentUser.profileImageKey?.startsWith('http') ? currentUser.profileImageKey : `${IMAGE_BASE_URL}${currentUser.profileImageKey}`)}
+                                    alt={currentUser.name}
+                                    className="w-full h-full object-cover"
+                                />
                             ) : (
                                 <User className="w-6 h-6 text-gray-400" />
                             )}

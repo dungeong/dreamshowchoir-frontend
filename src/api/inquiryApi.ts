@@ -64,3 +64,14 @@ export const getAdminInquiries = async (page: number = 0, size: number = 10, sta
 export const replyInquiry = async (id: number, answer: string): Promise<void> => {
     await axios.patch(`/api/admin/inquiry/${id}`, { answer });
 };
+// POST /api/inquiry (Public)
+export interface InquiryRequest {
+    name: string;
+    email: string;
+    content: string;
+    recaptchaToken: string;
+}
+
+export const submitInquiry = async (data: InquiryRequest): Promise<void> => {
+    await axios.post('/api/inquiry', data);
+};

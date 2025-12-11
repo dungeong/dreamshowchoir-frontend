@@ -89,6 +89,19 @@ export default function ApplicationPage() {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        // Check file size (5MB limit)
+        const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+        if (file.size > MAX_SIZE) {
+            Swal.fire({
+                icon: 'warning',
+                title: '용량 초과',
+                text: '이미지 파일 크기는 5MB 이하여야 합니다.',
+                confirmButtonColor: '#f59e0b',
+            });
+            e.target.value = ''; // Reset input
+            return;
+        }
+
         // Immediate preview
         const objectUrl = URL.createObjectURL(file);
         setPreviewUrl(objectUrl);
@@ -169,6 +182,27 @@ export default function ApplicationPage() {
         );
     }
 
+    // Block non-USER roles (e.g. ADMIN)
+    // Note: If the user role string is GUEST in some contexts, this might need adjustment,
+    // but we strictly follow the requirement "role must be User".
+    if (user.role !== 'USER') {
+        return (
+            <div className="max-w-2xl mx-auto px-4 py-20 text-center">
+                <div className="flex justify-center mb-6">
+                    <XCircle className="w-20 h-20 text-red-500" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">접근 권한이 없습니다</h1>
+                <p className="text-gray-600 mb-8 text-lg">
+                    일반 회원(User)만 입단 신청이 가능합니다.<br />
+                    관리자 계정이거나 권한이 없는 경우 접근할 수 없습니다.
+                </p>
+                <Button onClick={() => router.push('/')} variant="outline" size="lg" className="text-lg px-8">
+                    홈으로 돌아가기
+                </Button>
+            </div>
+        );
+    }
+
     if (application?.status === 'PENDING') {
         return (
             <div className="max-w-2xl mx-auto px-4 py-20 text-center">
@@ -187,10 +221,23 @@ export default function ApplicationPage() {
         );
     }
 
+    const handleHashtagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = e.target.value;
+        // Allows typing, auto-adds # to words.
+        // Logic: Split by spaces. If a part doesn't start with #, add it.
+        // We also need to handle trailing spaces to allow typing new words.
+
+        const endsWithSpace = value.endsWith(' ');
+        const parts = value.split(/\s+/).filter(Boolean);
+
+        const formatted = parts.map(part => part.startsWith('#') ? part : `#${part}`).join(' ');
+
+        form.setValue('hashTags', endsWithSpace ? formatted + ' ' : formatted);
+    };
+
     return (
-        <div className="max-w-2xl mx-auto px-4 py-12">
+        <div className="max-w-3xl mx-auto px-4">
             <div className="mb-10 text-center">
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">단원 가입 신청</h1>
                 <p className="text-gray-600">
                     드림쇼콰이어의 가족이 되어주세요.<br />
                     작성해주신 내용은 단원 선발을 위한 소중한 자료로 활용됩니다.
@@ -289,6 +336,9 @@ export default function ApplicationPage() {
                     <Input
                         id="hashTags"
                         {...form.register('hashTags')}
+                        onChange={(e) => {
+                            handleHashtagChange(e);
+                        }}
                         placeholder="#열정 #성실 #분위기메이커"
                         className="h-12 text-base"
                     />
