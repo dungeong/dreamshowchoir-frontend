@@ -25,7 +25,7 @@ const donationSchema = z.object({
             return Number(strVal);
         })
         .pipe(
-            z.number({ invalid_type_error: '숫자만 입력 가능합니다.' })
+            z.number()
                 .min(1000, '최소 1,000원 이상부터 가능합니다.')
         ),
 });
@@ -61,7 +61,7 @@ export default function DonationPage() {
         return () => clearTimeout(timer);
     }, [router]);
 
-    const form = useForm<DonationFormInput>({
+    const form = useForm<DonationFormInput, any, DonationFormOutput>({
         resolver: zodResolver(donationSchema),
         defaultValues: {
             type: 'REGULAR',
