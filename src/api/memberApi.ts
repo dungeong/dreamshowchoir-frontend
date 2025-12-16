@@ -1,5 +1,7 @@
 import axios from '@/lib/axios';
 
+import { useAuthStore } from '@/store/authStore';
+
 export interface Member {
     id: number;
     name: string;
@@ -143,9 +145,7 @@ export const getMyJoinApplication = async (): Promise<JoinApplication> => {
     return response.data;
 };
 
-import { useAuthStore } from '@/store/authStore';
 
-// ...
 
 export const signUp = async (data: SignUpRequest): Promise<void> => {
     const payload = {
